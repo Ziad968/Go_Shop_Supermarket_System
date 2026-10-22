@@ -54,7 +54,7 @@ T = {
     "updated": ("Product exists: stock increased", "المنتج موجود: تمت زيادة المخزون"),
     "search": ("Search by name or barcode...", "بحث بالاسم أو الباركود..."), "flt_all": ("All", "الكل"),
     "search_btn": ("Search", "بحث"), "act_search": ("Search activity...", "بحث في السجل..."),
-    "flt_out": ("Sold out", "خلصان"), "promote": ("Promote to admin", "ترقية لأدمن"),
+    "flt_out": ("Sold out", "منتهي"), "promote": ("Promote to admin", "ترقية لأدمن"),
     "demote": ("Demote to employee", "تنزيل لموظف"),
     "role_changed": ("Role updated (takes effect at next login)", "تم تغيير الصلاحية (تسري عند الدخول التالي)"),
     "cant_delete_admin": ("The admin account cannot be deleted", "حساب الأدمن لا يمكن حذفه"),
