@@ -10,6 +10,7 @@ import os
 import random
 import re
 import shutil
+import sys
 import time
 import uuid
 import webbrowser
@@ -19,7 +20,9 @@ from urllib.parse import quote
 
 import database as db
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# عند التشغيل كـ exe نستخدم مجلد الـ exe (وليس المجلد المؤقت) لحفظ الفواتير والنسخ والصور
+BASE_DIR = (os.path.dirname(sys.executable) if getattr(sys, "frozen", False)
+            else os.path.dirname(os.path.abspath(__file__)))
 
 
 def folder(name):
@@ -41,7 +44,7 @@ def open_html(content, filename, subdir):
         f.write(content)
     try:
         if os.name == "nt":
-            os.startfile(path)   # يفتح الملف بالبرنامج الافتراضي مباشرة
+            os.startfile(path)  # أضمن على ويندوز من رابط file:// (بيفتح إيدج بصفحة فاضية أحيانًا)
         else:
             webbrowser.open(Path(path).as_uri())
     except Exception:
@@ -144,11 +147,11 @@ def receipt_html(order, items, settings, L, change=None, auto_print=True):
             f"<div>{e(L['cashier'])}: {e(order['username'] or '')}</div>")
     if order["customer_name"]:
         meta += f"<div>{e(L['customer'])}: {e(order['customer_name'])}</div>"
-    script = "<script>window.onload=()=>setTimeout(()=>window.print(),300)</script>" if auto_print else ""
+    script = "<script>window.onload=()=>setTimeout(()=>window.print(),800)</script>" if auto_print else ""
     pbtn = '<div class="noprint c" style="margin:8px"><button style="font-size:16px;padding:6px 18px" onclick="window.print()">🖨 Print / طباعة</button></div>'
     return f"""<!doctype html><html dir="{L['dir']}"><head><meta charset="utf-8">
 <title>{e(L['invoice'])} {order['id']}</title><style>
-@page{{margin:2mm}} @media print{{.noprint{{display:none}}}}
+@page{{margin:2mm}} @media print{{.noprint{{display:none}}}} body{{width:72mm;margin:0 auto;font:12px Tahoma,Arial,sans-serif;color:#000}}
 .c{{text-align:center}} .logo{{max-width:60mm;max-height:24mm}} table{{width:100%;border-collapse:collapse}}
 td{{padding:2px 0;vertical-align:top}} .r{{text-align:end;white-space:nowrap}} hr{{border:0;border-top:1px dashed #000}}
 .big td{{font-size:15px;font-weight:bold;border-top:1px solid #000}} small{{color:#333}}
@@ -170,13 +173,13 @@ def labels_html(products, copies, settings):
                       f"<div class='nm'>{e(p['name'])}</div>{svg}<div class='bc'>{e(p['barcode'])}</div>"
                       f"<div class='pr'>{p['price']:.2f}</div></div>")
     return f"""<!doctype html><html><head><meta charset="utf-8"><title>Labels</title><style>
-@page{{margin:5mm}} body{{margin:0;font:11px Tahoma,Arial,sans-serif}}
+@page{{margin:5mm}} @media print{{.noprint{{display:none}}}} body{{margin:0;font:11px Tahoma,Arial,sans-serif}}
 .wrap{{display:flex;flex-wrap:wrap;gap:2mm}}
 .lb{{width:48mm;height:28mm;border:1px dashed #999;text-align:center;overflow:hidden;box-sizing:border-box;padding:1mm}}
 .sh{{font-size:8px;color:#444}} .nm{{font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 svg{{width:90%;height:9mm}} .bc{{font-size:9px;letter-spacing:1px}} .pr{{font-size:13px;font-weight:bold}}
 </style></head><body><div class="wrap">{cells}</div>
-<script>window.onload=()=>setTimeout(()=>window.print(),300)</script></body></html>"""
+<div class="noprint" style="margin:8px"><button style="font-size:16px;padding:6px 18px" onclick="window.print()">🖨 Print / طباعة</button></div></body></html>"""
 
 
 # ----------------------------------------------------------------------
