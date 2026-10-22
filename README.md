@@ -92,7 +92,7 @@ pip install -r requirements.txt
 2. Create an empty database (pgAdmin → *Databases* → *Create*, or in the SQL shell):
 
    ```sql
-   CREATE DATABASE Goshop;
+   CREATE DATABASE Go_shop;
    ```
 
    Any name works as long as you use it in the connection URL below.
